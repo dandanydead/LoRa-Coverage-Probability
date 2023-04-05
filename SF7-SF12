@@ -1,0 +1,44 @@
+clear all
+    clc
+    distancia = 0:1000:30000            % Distancia [mts]
+    frecuencia = 915000000              % Frecuencia de Tx [Hz]
+    BW = 125000                         % Ancho de banda [Hz]
+    C = 299792458                       % V. de la luz [mts/s]
+    longitud = (C/frecuencia)           % Longitud de onda [mts]
+    n = 2.7                             % Exponente de perdida por trayectoria
+    P = 0.02511                         % Potencia de Tx [W]
+
+    qSF7_W = 10^((-6-30)/10)            % qsf para SF7 [W]
+    qSF8_W = 10^((-9-30)/10)            % qsf para SF8 [W]
+    qSF9_W = 10^((-12-30)/10)           % qsf para SF9 [W]
+    qSF10_W = 10^((-15-30)/10)          % qsf para SF10 [W]
+    qSF11_W = 10^((-17.5-30)/10)        % qsf para SF11 [W]
+    qSF12_W = 10^((-20-30)/10)          % qsf para SF12 [W]
+
+    %La siguiente linea evalua la Perdida por Trayectoria [dB] para el exponente definido en linea 8
+    
+    pathloss = longitud./((4*pi*distancia).^n)     % [dB]
+
+    var_ruido = -174 + 10*log10(BW) + 6 %Varianza de ruido [dBm]
+    var_ruido_W = 10^((var_ruido)/10)   %Varianza de ruido [W]
+
+    %Las siguientes lineas evaluan la Probabilidad de cobertura para las diferentes Spreading Factors
+
+    SF7 = exp (-(var_ruido_W*qSF7_W) ./ (P*pathloss))
+    SF8 = exp (-(var_ruido_W*qSF8_W) ./ (P*pathloss))
+    SF9 = exp (-(var_ruido_W*qSF9_W) ./ (P*pathloss))
+    SF10 = exp (-(var_ruido_W*qSF10_W) ./ (P*pathloss))
+    SF11 = exp (-(var_ruido_W*qSF11_W) ./ (P*pathloss))
+    SF12 = exp (-(var_ruido_W*qSF12_W) ./ (P*pathloss))
+
+    %Las siguientes lineas simplemente generan los graficos
+    
+    plot(distancia,SF7)
+    hold on
+    plot(distancia,SF8)
+    plot(distancia,SF9)
+    plot(distancia,SF10)
+    plot(distancia,SF11)
+    plot(distancia,SF12)
+    legend('SF7','SF8','SF9','SF10','SF11','SF12')
+    hold off
